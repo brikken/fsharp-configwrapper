@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="SimpleIO.fs" />
+    <Compile Include="SimpleSerialization.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
