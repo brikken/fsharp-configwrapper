@@ -6,6 +6,10 @@
   <ItemGroup>
     <Compile Include="SimpleIO.fs" />
     <Compile Include="SimpleSerialization.fs" />
+    <Compile Include="VersionedDTOs.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.FSharpLu.Json" Version="0.11.5" />
   </ItemGroup>
 </Project>

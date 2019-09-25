@@ -3,20 +3,16 @@ module SimpleSerialization
 open System.Xml
 open System.Xml.Serialization
 
-[<XmlRoot("MyData")>]
-[<CLIMutable>]
+type SubType =
+    | OptionOne
+    | OptionTwo of string * int
+    | OptionThree of MyField: float
+
 type MyData = {
-    [<XmlElement("Text")>]
     text: string
-    [<XmlElement("Value")>]
     value: int
-    [<XmlElement("Items")>]
     items: SubType list
 }
-
-and SubType =
-    | [<XmlElement("OptionOne")>] OptionOne
-    | [<XmlElement("OptionTwo")>] OptionTwo of string * int
 
 let getXml myData =
     let x = XmlDocument()
@@ -39,14 +35,13 @@ let getXml myData =
                             z.SetAttribute("a", a)
                             z.SetAttribute("b", sprintf "%i" b)
                             z
+                    | SubType.OptionThree myField ->
+                        x.CreateElement("OptionThree")
+                        |> fun z ->
+                            z.SetAttribute("MyField", sprintf "%f" myField)
+                            z
             List.iter (getXml >> items.AppendChild >> ignore) myData.items
             items) |> ignore
         m
     ) |> ignore
     x.OuterXml
-
-let getSerializerXml (myData:MyData) =
-    let serializer = XmlSerializer(typeof<MyData>)
-    let writer = new System.IO.StringWriter()
-    serializer.Serialize(writer, myData)
-    writer.ToString()
