@@ -5,7 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "--set-date",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
+            "args": ["--set-date","2019-01-01"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "--get-date",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
+            "args": ["--get-date"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": true,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Show usage",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -15,6 +37,5 @@
             "stopAtEntry": false,
             "console": "internalConsole"
         }
-
     ]
 }

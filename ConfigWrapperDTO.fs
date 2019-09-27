@@ -3,6 +3,7 @@ namespace ConfigWrapper
 module DTO =
     open Microsoft.FSharpLu.Json
     open System
+    open ResultComputationExpression
 
     type SettingsDTOv1 = {
         date: DateTime
@@ -11,15 +12,30 @@ module DTO =
         date: DateTime
         server: string
     }
+    type Server = private Server of string
+    module Server =
+        type CreateServerError =
+            | Null
+            | IllegalName
+            | TooLong
+        let private idMaxlength = 128
+        let private legalCharacters = [|'_'; '-'|]
+        let value (Server server) = server
+        let create server = 
+            if isNull server then Error CreateServerError.Null
+            else if String.length server > idMaxlength then Error CreateServerError.TooLong
+            else if server.ToCharArray() |> Array.exists (fun c -> (Char.IsLetterOrDigit c || Array.contains c legalCharacters) |> not)
+                then Error CreateServerError.IllegalName
+            else Ok (Server server)
+
+    type Settingsv2 = {
+        date: DateTime
+        server: Server
+    }
     type UpgradeDTOv1v2 = string -> SettingsDTOv1 -> SettingsDTOv2
     type GetAsNewestDTO = string -> Result<SettingsDTOv2,string>
-
-    let tryDeserializeV1 json =
-        try
-            let (dto: SettingsDTOv1) = Compact.deserialize json
-            Ok dto
-        with
-            ex -> Error ex.Message
+    type FromDTOError =
+        | ServerError of Server.CreateServerError
 
     let serialize = Compact.serialize
 
@@ -41,3 +57,14 @@ module DTO =
                 Ok (dto |> upgradeDTOv1v2Default)
             with        
                 ex -> Error ex.Message
+
+    let fromDto (dto: SettingsDTOv2) =
+        result {
+            let! server =
+                Server.create dto.server
+                |> Result.mapError FromDTOError.ServerError
+            return { Settingsv2.date = dto.date; server = server }
+        }
+
+    let toDto settings =
+        { SettingsDTOv2.date = settings.date; server = Server.value settings.server }
