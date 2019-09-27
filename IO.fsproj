@@ -8,8 +8,9 @@
     <Compile Include="SimpleSerialization.fs" />
     <Compile Include="VersionedDTOs.fs" />
     <Compile Include="ResultComputationExpression.fs" />
+    <Compile Include="ConfigWrapperDTO.fs" />
+    <Compile Include="ConfigWrapperIO.fs" />
     <Compile Include="ConfigWrapper.fs" />
-    <!--<Compile Include="Program.fs" />-->
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Argu" Version="5.5.0" />
