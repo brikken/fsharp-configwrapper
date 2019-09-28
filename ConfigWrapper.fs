@@ -84,32 +84,22 @@ module Core =
 
     let setDate : SetDateAction = fun path date ->
         result {
-            let! dto =
-                loadSettingsOrDefault path
-                |> Result.mapError SetDateError.LoadError
+            let! dto = loadSettingsOrDefault path |> Result.mapError SetDateError.LoadError
             let dtoNew = { dto with date = date }
-            let! _ =
-                saveSettings path dtoNew
-                |> Result.mapError SetDateError.SaveError
+            do! saveSettings path dtoNew |> Result.mapError SetDateError.SaveError
             return DateSet date        
         }
 
     let getDate : GetDateAction = fun path ->
         result {
-            let! dto =
-                loadSettings path
-                |> Result.mapError GetDateError.LoadError
+            let! dto = loadSettings path |> Result.mapError GetDateError.LoadError
             return (DateRetrieved dto.date)
         }
 
     let performAction : ApplicationAction = fun vArgs ->
         match vArgs with
-        | GetDate ->
-            getDate settingsFile
-            |> Result.mapError GetDateError
-        | SetDate date ->
-            setDate settingsFile date
-            |> Result.mapError SetDateError
+        | GetDate -> getDate settingsFile |> Result.mapError GetDateError
+        | SetDate date -> setDate settingsFile date |> Result.mapError SetDateError
 
     let formatDate (date: DateTime) =
         date.ToShortDateString()
@@ -122,10 +112,15 @@ module Core =
             | DateRetrieved date -> date |> formatDate
         { returnCode = 0; consoleOutput = consoleOutput }
 
+    let fromDtoFail (err: FromDTOError) =
+        match err with
+        | FromDTOError.ServerError err -> { returnCode = 7; consoleOutput = sprintf "Could not load settings file. Error in server definition: %s" (Server.errorMessage err)}
+
     let loadSettingsFail (loadSettingsError: LoadSettingsError) =
         match loadSettingsError with
         | LoadSettingsError.IOError err -> { returnCode = 3; consoleOutput = sprintf "Could not load settings from file: %s" err }
         | LoadSettingsError.FileFormatError err -> { returnCode = 4; consoleOutput = sprintf "Settings file has invalid format: %s" err }
+        | LoadSettingsError.InvalidDataError err -> fromDtoFail err
 
     let saveSettingsFail saveSettingsError =
         match saveSettingsError with

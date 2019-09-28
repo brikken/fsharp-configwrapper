@@ -10,7 +10,24 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
-            "args": ["--set-date","2019-01-01"],
+            "args": [
+                "--set-date",
+                "2019-01-01"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "--set-date illegal",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
+            "args": [
+                "--set-date",
+                "${input:echoPrompt}"
+            ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
@@ -21,7 +38,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
-            "args": ["--get-date"],
+            "args": [
+                "--get-date"
+            ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": true,
             "console": "internalConsole"
@@ -36,6 +55,14 @@
             "cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.0/",
             "stopAtEntry": false,
             "console": "internalConsole"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "echoPrompt",
+            "description": "Please enter a value",
+            "default": "default echo text",
+            "type": "promptString"
         }
     ]
 }

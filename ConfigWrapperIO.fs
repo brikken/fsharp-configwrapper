@@ -10,9 +10,10 @@ module IO =
     type LoadSettingsError =
         | IOError of string
         | FileFormatError of string
-    type LoadSettings = string -> Result<SettingsDTOv2,LoadSettingsError>
-    type SaveSettings = string -> SettingsDTOv2 -> Result<unit,SaveSettingError>
-    type LoadSettingsOrDefault = string -> Result<SettingsDTOv2,LoadSettingsError>
+        | InvalidDataError of FromDTOError
+    type LoadSettings = string -> Result<Settingsv2,LoadSettingsError>
+    type SaveSettings = string -> Settingsv2 -> Result<unit,SaveSettingError>
+    type LoadSettingsOrDefault = string -> Result<Settingsv2,LoadSettingsError>
 
     let tryReadAllText path =
         try
@@ -30,21 +31,20 @@ module IO =
 
     let loadSettings : LoadSettings = fun path ->
         result {
-            let! contents =
-                tryReadAllText(path)
-                |> Result.mapError LoadSettingsError.IOError
-            let! dto =
-                getAsNewestDTO contents
-                |> Result.mapError LoadSettingsError.FileFormatError
-            return dto
+            let! contents = tryReadAllText(path) |> Result.mapError LoadSettingsError.IOError
+            let! dto = getAsNewestDTO contents |> Result.mapError LoadSettingsError.FileFormatError
+            let! settings = fromDto dto |> Result.mapError LoadSettingsError.InvalidDataError
+            return settings
         }
 
     let loadSettingsOrDefault : LoadSettingsOrDefault = fun path ->
         if IO.File.Exists(path)
         then loadSettings path
-        else Ok (upgradeDTOv0v1Default |> upgradeDTOv1v2Default)
+        else
+            upgradeDTOv0v1Default
+            |> upgradeDTOv1v2Default
+            |> fromDto |> Result.mapError LoadSettingsError.InvalidDataError
 
     let saveSettings : SaveSettings = fun path dto ->
         serialize dto
-        |> tryWriteAllText path
-        |> Result.mapError SaveSettingError.IOError
+        |> tryWriteAllText path |> Result.mapError SaveSettingError.IOError
