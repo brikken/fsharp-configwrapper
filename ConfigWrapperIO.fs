@@ -37,14 +37,18 @@ module IO =
             return settings
         }
 
+    let ``default`` =
+        upgradeDTOv0v1Default
+        |> upgradeDTOv1v2Default
+        |> fromDto |> Result.mapError LoadSettingsError.InvalidDataError
+
     let loadSettingsOrDefault : LoadSettingsOrDefault = fun path ->
         if IO.File.Exists(path)
         then loadSettings path
-        else
-            upgradeDTOv0v1Default
-            |> upgradeDTOv1v2Default
-            |> fromDto |> Result.mapError LoadSettingsError.InvalidDataError
+        else ``default``
 
-    let saveSettings : SaveSettings = fun path dto ->
-        serialize dto
+    let saveSettings : SaveSettings = fun path settings ->
+        settings
+        |> toDto
+        |> serialize
         |> tryWriteAllText path |> Result.mapError SaveSettingError.IOError

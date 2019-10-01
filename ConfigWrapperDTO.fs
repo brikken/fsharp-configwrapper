@@ -5,13 +5,6 @@ module DTO =
     open System
     open ResultComputationExpression
 
-    type SettingsDTOv1 = {
-        date: DateTime
-    }
-    type SettingsDTOv2 = {
-        date: DateTime
-        server: string
-    }
     type Server = private Server of string
     module Server =
         type CreateServerError =
@@ -41,6 +34,13 @@ module DTO =
                 return Server server
             }
 
+    type SettingsDTOv1 = {
+        date: DateTime
+    }
+    type SettingsDTOv2 = {
+        date: DateTime
+        server: string
+    }
     type Settingsv2 = {
         date: DateTime
         server: Server

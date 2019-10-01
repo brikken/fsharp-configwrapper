@@ -5,13 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "--set-date",
+            "name": "set date",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
             "args": [
-                "--set-date",
+                "set",
+                "date",
                 "2019-01-01"
             ],
             "cwd": "${workspaceFolder}",
@@ -19,13 +20,31 @@
             "console": "internalConsole"
         },
         {
-            "name": "--set-date illegal",
+            "name": "set date (ignore)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
             "args": [
-                "--set-date",
+                "set",
+                "date",
+                "2019-01-01",
+                "ignore-existing",
+                "true"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "set date (illegal)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
+            "args": [
+                "set",
+                "date",
                 "${input:echoPrompt}"
             ],
             "cwd": "${workspaceFolder}",
@@ -33,13 +52,19 @@
             "console": "internalConsole"
         },
         {
-            "name": "--get-date",
+            "name": "set date server (ignore)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
             "args": [
-                "--get-date"
+                "set",
+                "date",
+                "2019-10-01",
+                "server",
+                "MyServer",
+                "ignore-existing",
+                "true"
             ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": true,
@@ -52,6 +77,17 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
             "args": [],
+            "cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.0/",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Show usage --set",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
+            "args": ["set", "--help"],
             "cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.0/",
             "stopAtEntry": false,
             "console": "internalConsole"

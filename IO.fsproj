@@ -8,8 +8,10 @@
     <Compile Include="SimpleSerialization.fs" />
     <Compile Include="VersionedDTOs.fs" />
     <Compile Include="ResultComputationExpression.fs" />
+    <Compile Include="ConfigWrapperNonEmptyList.fs" />
     <Compile Include="ConfigWrapperDTO.fs" />
     <Compile Include="ConfigWrapperIO.fs" />
+    <Compile Include="ConfigWrapperTest.fs" />
     <Compile Include="ConfigWrapper.fs" />
   </ItemGroup>
   <ItemGroup>
