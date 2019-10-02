@@ -76,7 +76,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.0/IO.dll",
-            "args": [],
+            "args": ["--help"],
             "cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.0/",
             "stopAtEntry": false,
             "console": "internalConsole"

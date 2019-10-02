@@ -12,6 +12,7 @@
     <Compile Include="ConfigWrapperDTO.fs" />
     <Compile Include="ConfigWrapperIO.fs" />
     <Compile Include="ConfigWrapperTest.fs" />
+    <Compile Include="ConfigWrapperCLI.fs" />
     <Compile Include="ConfigWrapper.fs" />
   </ItemGroup>
   <ItemGroup>
