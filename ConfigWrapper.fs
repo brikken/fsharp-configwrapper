@@ -139,7 +139,7 @@ module Core =
         | SetDateError err -> setDateFail err
         | DateFormatError dateString -> { returnCode = 5; consoleOutput = [sprintf "Illegal date format: %s" dateString]}
 
-    [<EntryPoint>]
+    //[<EntryPoint>]
     let main : Application = fun argv ->
         let applicationResult = result {
             let! parsedArguments = parseArguments argv |> Result.mapError ApplicationError.ParseError
