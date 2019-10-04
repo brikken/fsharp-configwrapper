@@ -6,6 +6,7 @@ open SimpleSerialization
 open Microsoft.FSharpLu.Json
 open VersionedDTOs
 open BinarySerialization
+open AtomicIO
 
 let serialize serializer path contents name =
     try    
@@ -16,8 +17,9 @@ let serialize serializer path contents name =
 
 [<EntryPoint>]
 let main argv =
-    printfn "%s" (BinarySerialization.serialize CaseA)
-    printfn "%s" (BinarySerialization.serialize (CaseB "test"))
-    printfn "%s" (BinarySerialization.serialize (CaseC (DateTime(2000,1,1), 10.2M)))
-    printfn "%s" (BinarySerialization.serialize (CaseD { value = 10; name = "something"; }))
+    match AtomicIO.writeAllText "test.txt" "Dette er min vigtige tekst!" with
+    | Ok _ -> printfn "Ok!"
+    | Error errors ->
+        printfn "Error!"
+        errors |> List.iter (fun err -> printfn "%s" (err.ToString()))
     0 // return an integer exit code
