@@ -1,25 +1,25 @@
 ﻿// Learn more about F# at http://fsharp.org
 
 open System
-open SimpleIO
-open SimpleSerialization
-open Microsoft.FSharpLu.Json
-open VersionedDTOs
-open BinarySerialization
-open AtomicIO
-
-let serialize serializer path contents name =
-    try    
-        contents |> serializer |> fun c -> System.IO.File.WriteAllText(path, c)
-        printfn "Serialized %s" name
-    with
-        ex -> printfn "%s serialization failed: %s" name ex.Message    
+open RobustIO.Directory
 
 [<EntryPoint>]
 let main argv =
-    match AtomicIO.writeAllText "test.txt" "Dette er min vigtige tekst!" with
-    | Ok _ -> printfn "Ok!"
-    | Error errors ->
-        printfn "Error!"
-        errors |> List.iter (fun err -> printfn "%s" (err.ToString()))
+    let spec = {
+        name = "test";
+        directories = [
+            {
+                name = "foldermatch";
+                directories = [];
+                files = [ "foldermatchmissingfile" ];
+            };
+            {
+                name = "foldermissing";
+                directories = [];
+                files = [];
+            };
+        ];
+        files = [ "test"; "missing"; ];
+    }
+    let compare = Specification.compareDirectory (IO.DirectoryInfo("test")) spec
     0 // return an integer exit code

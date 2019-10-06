@@ -16,6 +16,7 @@
     <Compile Include="ConfigWrapperCLI.fs" />
     <Compile Include="ConfigWrapper.fs" />
     <Compile Include="AtomicIO.fs" />
+    <Compile Include="RobustIO.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
