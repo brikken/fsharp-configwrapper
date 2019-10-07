@@ -20,8 +20,8 @@ module Directory =
         open ResultComputationExpression
 
         type ComparisonResult = {
-            missing: Specification
-            additional: Specification
+            missing: Specification option
+            additional: Specification option
         }
 
         type GetSpecificationError =
@@ -29,6 +29,15 @@ module Directory =
         type CompareError =
             | GetSpecificationError of GetSpecificationError
         type CompareDirectory = System.IO.DirectoryInfo -> Specification -> Result<ComparisonResult,CompareError>
+        type GetFilePaths = Specification -> string list
+
+        let getFilePaths : GetFilePaths = fun spec ->
+            let separator = (string System.IO.Path.DirectorySeparatorChar)
+            let rec getFilePathsRec spec prefix =
+                let filePaths = spec.files |> List.map (fun f -> prefix + f)
+                let directoryFilePaths = spec.directories |> List.collect (fun d -> getFilePathsRec d (prefix + d.name + separator))
+                filePaths @ directoryFilePaths
+            getFilePathsRec spec separator
 
         let private get (dir: System.IO.DirectoryInfo) =
             let rec getRec (dir: System.IO.DirectoryInfo) =
@@ -40,25 +49,21 @@ module Directory =
             with
                 ex -> Error (IOError ex.Message)
 
-        let compare spec1 spec2 : Specification =
-            let rec compareRec spec1 spec2 : Specification option =
-                let compareDirectory dir =
-                    let dirToCompareWith = spec2.directories |> List.tryFind (fun d -> d.name = dir.name)
-                    match dirToCompareWith with
-                    | None -> [ dir ]
-                    | Some dir2 ->
-                        match compareRec dir dir2 with
-                        | None -> []
-                        | Some spec -> [ spec ]
-                let directories = spec1.directories |> List.collect compareDirectory
-                let files = spec1.files |> List.filter (fun f -> spec2.files |> List.contains f |> not)
-                if List.isEmpty directories && List.isEmpty files then
-                    None
-                else
-                    Some { name = spec1.name; directories = directories; files = files; }
-            match compareRec spec1 spec2 with
-            | Some spec -> spec
-            | None -> { name = spec1.name; directories = []; files = []; }
+        let rec compare spec1 spec2 : Specification option =
+            let compareDirectory dir =
+                let dirToCompareWith = spec2.directories |> List.tryFind (fun d -> d.name = dir.name)
+                match dirToCompareWith with
+                | None -> [ dir ]
+                | Some dir2 ->
+                    match compare dir dir2 with
+                    | None -> []
+                    | Some spec -> [ spec ]
+            let directories = spec1.directories |> List.collect compareDirectory
+            let files = spec1.files |> List.filter (fun f -> spec2.files |> List.contains f |> not)
+            if List.isEmpty directories && List.isEmpty files then
+                None
+            else
+                Some { name = spec1.name; directories = directories; files = files; }
 
         let compareDirectory : CompareDirectory = fun dir spec ->
             result {
