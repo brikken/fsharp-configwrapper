@@ -1,9 +1,8 @@
 ﻿// Learn more about F# at http://fsharp.org
 
-open System
-open BinarySerialization
+open IOUse
 
 [<EntryPoint>]
 let main argv =
-    serializeToFile "test.bin" 10000000
+    writeStream "test.txt"
     0 // return an integer exit code

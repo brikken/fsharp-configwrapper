@@ -15,6 +15,7 @@
     <Compile Include="ConfigWrapperTest.fs" />
     <Compile Include="ConfigWrapperCLI.fs" />
     <Compile Include="ConfigWrapper.fs" />
+    <Compile Include="IOUse.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
